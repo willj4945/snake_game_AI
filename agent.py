@@ -11,7 +11,11 @@ LR = 0.001  # Learning Rate
 
 class Agent:
     def __int__(self):
-        pass
+        self.n_games = 0  # number of games
+        self.epsilon = 0  # control randomness
+        self.gamma = 0    # discount rate
+        self.memory = deque(maxlen=MAX_MEMORY)  # Calls popleft()
+        # TODO: Model, Trainer
 
     def get_state(self, game):
         pass
@@ -28,8 +32,10 @@ class Agent:
     def get_action(self, state):
         pass
 
-def train ():
+
+def train():
     pass
+
 
 if __name__ == '__main__':
     train()
