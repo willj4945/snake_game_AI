@@ -3,9 +3,10 @@ import random
 from enum import Enum
 from collections import namedtuple
 import numpy as np
+import os
 
 pygame.init()
-font = pygame.font.Font('arial.ttf', 25)
+font = pygame.font.Font(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'arial.ttf'), 25)
 
 
 
@@ -99,10 +100,10 @@ class SnakeGameAI:
         if pt is None:
             pt = self.head
         # hits boundary
-        if self.head.x > self.w - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.h - BLOCK_SIZE or self.head.y < 0:
+        if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             return True
         # hits itself
-        if self.head in self.snake[1:]:
+        if pt in self.snake[1:]:
             return True
 
         return False
