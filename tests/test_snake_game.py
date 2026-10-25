@@ -1,7 +1,8 @@
+import pygame
 import pytest
 
 import snake_game
-from snake_game import Direction, Point, BLOCK_SIZE
+from snake_game import Direction, Point, BLOCK_SIZE, QuitRequested
 from tests.conftest import place_snake
 
 STRAIGHT, RIGHT_TURN, LEFT_TURN = [1, 0, 0], [0, 1, 0], [0, 0, 1]
@@ -104,3 +105,20 @@ def test_reset_after_game_over(game):
     game.reset()
     assert game.score == 0
     assert game.head == Point(320, 240)
+
+
+@pytest.mark.parametrize('event', [
+    pygame.event.Event(pygame.QUIT),
+    pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE),
+    pygame.event.Event(pygame.KEYDOWN, key=pygame.K_q),
+])
+def test_quit_events_raise_quit_requested(game, event):
+    pygame.event.post(event)
+    with pytest.raises(QuitRequested):
+        game.play_step(STRAIGHT)
+
+
+def test_other_keys_do_not_quit(game):
+    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE))
+    reward, game_over, score = game.play_step(STRAIGHT)
+    assert not game_over

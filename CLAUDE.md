@@ -22,7 +22,7 @@ Dependencies are managed with uv (`pyproject.toml` + `uv.lock`). There is no `re
 
 | File | Role |
 |---|---|
-| `snake_game.py` | `SnakeGameAI` environment. `play_step(action)` returns `(reward, game_over, score)`. Also defines `Direction`, `Point`, `BLOCK_SIZE=20`, and `SPEED=40` (FPS cap, which limits training speed). Calls `pygame.init()` and loads the font at import time. |
+| `snake_game.py` | `SnakeGameAI` environment. `play_step(action)` returns `(reward, game_over, score)`. Also defines `Direction`, `Point`, `BLOCK_SIZE=20`, and `SPEED=40` (FPS cap, which limits training speed). Closing the window or pressing Esc/Q makes `play_step` raise `QuitRequested`. `train()` catches that and `KeyboardInterrupt`, then calls `game.close()` and `helper.close()`. Calls `pygame.init()` and loads the font at import time. |
 | `agent.py` | `Agent` builds the state, picks epsilon-greedy actions, and holds replay memory. `train()` is the main loop and the entry point. |
 | `model.py` | `Linear_QNet` (11 → 256 → 3 MLP, ReLU; `save`/`load` checkpoints) and `QTrainer` (Adam + MSE Bellman update). `train_step` accepts a single transition or a batch. |
 | `helper.py` | `plot(scores, mean_scores)` draws a live matplotlib chart through IPython display. |

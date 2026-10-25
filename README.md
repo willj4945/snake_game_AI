@@ -16,7 +16,7 @@ uv sync              # creates .venv with the locked dependencies (CPU-only PyTo
 uv run agent.py      # start training
 ```
 
-Two windows open: the game, and a chart of each game's score with the running mean. Training runs until you close the game window.
+Two windows open: the game, and a chart of each game's score with the running mean. Training runs until you close the game window, press Esc or Q in it, or press Ctrl+C in the terminal. Any of these closes both windows and prints a summary. The checkpoint is only written when a new record is set, so stopping never overwrites it.
 
 Training needs a display. On WSL, use WSLg (Windows 11) or an X server.
 
