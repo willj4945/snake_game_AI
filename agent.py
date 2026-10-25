@@ -2,9 +2,9 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from snake_game import SnakeGameAI, Direction, Point
+from snake_game import SnakeGameAI, Direction, Point, QuitRequested
 from model import Linear_QNet, QTrainer
-from helper import plot
+from helper import plot, close as close_plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -107,40 +107,46 @@ def train():
     total_score = 0
     agent = Agent()
     game = SnakeGameAI()
-    while True:
-        # get old state
-        state_old = agent.get_state(game)
+    try:
+        while True:
+            # get old state
+            state_old = agent.get_state(game)
 
-        # get move
-        final_move = agent.get_action(state_old)
+            # get move
+            final_move = agent.get_action(state_old)
 
-        # perform move and get new state
-        reward, done, score = game.play_step(final_move)
-        state_new = agent.get_state(game)
+            # perform move and get new state
+            reward, done, score = game.play_step(final_move)
+            state_new = agent.get_state(game)
 
-        # train short memory
-        agent.train_short_memory(state_old, final_move, reward, state_new, done)
+            # train short memory
+            agent.train_short_memory(state_old, final_move, reward, state_new, done)
 
-        # remember
-        agent.remember(state_old, final_move, reward, state_new, done)
+            # remember
+            agent.remember(state_old, final_move, reward, state_new, done)
 
-        if done:
-            # train long memory, plot result
-            game.reset()
-            agent.n_games += 1
-            agent.train_long_memory()
+            if done:
+                # train long memory, plot result
+                game.reset()
+                agent.n_games += 1
+                agent.train_long_memory()
 
-            if score > agent.record:
-                agent.record = score
-                agent.model.save(agent.record, agent.n_games)
+                if score > agent.record:
+                    agent.record = score
+                    agent.model.save(agent.record, agent.n_games)
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', agent.record)
+                print('Game', agent.n_games, 'Score', score, 'Record:', agent.record)
 
-            plot_scores.append(score)
-            total_score += score
-            mean_score = total_score / len(plot_scores)
-            plot_mean_scores.append(mean_score)
-            plot(plot_scores, plot_mean_scores)
+                plot_scores.append(score)
+                total_score += score
+                mean_score = total_score / len(plot_scores)
+                plot_mean_scores.append(mean_score)
+                plot(plot_scores, plot_mean_scores)
+    except (QuitRequested, KeyboardInterrupt):
+        print('Training stopped after', agent.n_games, 'games. Record:', agent.record)
+    finally:
+        game.close()
+        close_plot()
 
 
 if __name__ == '__main__':

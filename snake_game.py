@@ -19,6 +19,11 @@ class Direction(Enum):
 
 Point = namedtuple('Point', 'x, y')
 
+
+class QuitRequested(Exception):
+    """Raised by play_step when the user closes the window or presses Esc/Q."""
+
+
 # rgb colors
 WHITE = (255, 255, 255)
 RED = (200, 0, 0)
@@ -67,8 +72,9 @@ class SnakeGameAI:
         # 1. collect user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                raise QuitRequested
+            if event.type == pygame.KEYDOWN and event.key in (pygame.K_ESCAPE, pygame.K_q):
+                raise QuitRequested
 
         # 2. move
         self._move(action)  # update the head
@@ -95,6 +101,9 @@ class SnakeGameAI:
         self.clock.tick(SPEED)
         # 6. return game over and score
         return reward, game_over, self.score
+
+    def close(self):
+        pygame.quit()
 
     def is_collision(self, pt=None):
         if pt is None:

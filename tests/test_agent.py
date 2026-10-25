@@ -4,7 +4,7 @@ import torch
 
 import agent as agent_module
 from agent import Agent, MAX_MEMORY
-from snake_game import Direction, Point
+from snake_game import Direction, Point, QuitRequested
 from tests.conftest import place_snake
 
 # State layout: [danger straight, danger right, danger left, dir L, R, U, D, food L, R, U, D]
@@ -97,3 +97,17 @@ def test_train_long_memory_updates_weights(agent, game):
     before = [p.detach().clone() for p in agent.model.parameters()]
     agent.train_long_memory()
     assert any(not torch.equal(b, a) for b, a in zip(before, agent.model.parameters()))
+
+
+@pytest.mark.parametrize('exc', [QuitRequested, KeyboardInterrupt])
+def test_train_stops_cleanly_on_quit(in_tmp_dir, monkeypatch, exc):
+    def stop(self, action):
+        raise exc
+    monkeypatch.setattr(agent_module.SnakeGameAI, 'play_step', stop)
+    closed = []
+    monkeypatch.setattr(agent_module.SnakeGameAI, 'close', lambda self: closed.append('game'))
+    monkeypatch.setattr(agent_module, 'close_plot', lambda: closed.append('plot'))
+
+    agent_module.train()  # returns instead of raising
+
+    assert closed == ['game', 'plot']
