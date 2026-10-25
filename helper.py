@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib._pylab_helpers import Gcf
 from IPython import display
 
 plt.ion()
@@ -21,4 +22,9 @@ def plot(scores, mean_scores):
 
 
 def close():
-    plt.close('all')
+    try:
+        plt.close('all')
+    except Exception:
+        # Tk raises TclError if its window was already torn down. Forget the figures
+        # so matplotlib's exit hook doesn't try to destroy them again.
+        Gcf.figs.clear()
