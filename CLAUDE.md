@@ -26,7 +26,7 @@ Dependencies are managed with uv (`pyproject.toml` + `uv.lock`). There is no `re
 | `agent.py` | `Agent` builds the state, picks epsilon-greedy actions, and holds replay memory. `train()` is the main loop and the entry point. |
 | `model.py` | `Linear_QNet` (11 → 256 → 3 MLP, ReLU; `save`/`load` checkpoints) and `QTrainer` (Adam + MSE Bellman update). `train_step` accepts a single transition or a batch. |
 | `helper.py` | `plot(scores, mean_scores)` draws a live matplotlib chart through IPython display. |
-| `model/model.pth` | Checkpoint dict `{'model_state', 'record', 'n_games'}`. It is written each time the score beats the all-time record. |
+| `model/model.pth` | Checkpoint dict `{'model_state', 'record', 'n_games'}`. It is written each time the score beats the all-time record. `model/` is gitignored, so checkpoints are local only. |
 
 **Action encoding:** a one-hot list of length 3, `[straight, right turn, left turn]`, relative to the current direction (see `SnakeGameAI._move`).
 
@@ -63,4 +63,4 @@ Dependencies are managed with uv (`pyproject.toml` + `uv.lock`). There is no `re
 
 - `.idea/` is committed (PyCharm project files, with the interpreter set to an old 3.9 venv). Ignore it.
 - The game has no human-playable mode. `SnakeGameAI` expects actions from the agent.
-- `model/model.pth` in git predates the `is_collision` fix, so its weights learned from broken danger inputs. Delete it to retrain cleanly.
+- Checkpoints are not in git. A local `model/model.pth` older than the `is_collision` fix learned from broken danger inputs. Delete it to retrain cleanly.

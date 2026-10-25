@@ -24,6 +24,8 @@ Training needs a display. On WSL, use WSLg (Windows 11) or an X server.
 
 Whenever the agent beats its all-time record, it saves a checkpoint to `model/model.pth`. The checkpoint holds the network weights, the record, and the number of games played. On the next run the agent picks up where it left off. To train from scratch, delete `model/model.pth`.
 
+The `model/` directory is gitignored, so checkpoints stay on your machine and a fresh clone starts with an untrained agent.
+
 ## How it works
 
 Each frame, the agent looks at the game, picks a move, and learns from the result.
@@ -54,7 +56,7 @@ agent.py         Agent (state, action selection, replay memory) and the training
 model.py         Q-network (Linear_QNet) with checkpoint save/load, and the trainer (QTrainer)
 snake_game.py    Snake environment (SnakeGameAI)
 helper.py        Live training plot
-model/           Saved checkpoint
+model/           Saved checkpoint (gitignored, created on first record)
 tests/           pytest suite
 ```
 
