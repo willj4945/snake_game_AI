@@ -2,7 +2,7 @@ name: Security
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
   schedule:
     # Weekly, so newly published CVEs are caught even without code changes.
